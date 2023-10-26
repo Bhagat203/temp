@@ -1,1 +1,22 @@
-t1 file
+df = pd.read_excel("./graded1/EDA_census.xlsx")
+df.columns = df.iloc[3,]
+listOfDataInRow3 = [(str(df.columns[i])+" "+(str(df.iloc[0,i]))).replace("nan","").strip()  if df.columns[i].__eq__("nan") else str(df.columns[i]) for i in range(0,df.shape[1]) ]
+# df.columns =  list
+# listOfDataInRow3
+# listOfDataInRow2 = np.hstack((np.array(df.iloc[0,6:])[[not i for i  in df.iloc[0,6:].isnull()]] , np.array(df.iloc[1,]+" "+df.iloc[2,])[[not i for i  in (df.iloc[1,]+" "+df.iloc[2,]).isnull()]][1:]))
+listOfDataInRow2 = list(filter(lambda x: len(x)>0, map(lambda x:x.replace("nan","").strip() ,list(map((' '.join), zip(df.iloc[0,].astype(str), df.iloc[1,].astype(str),df.iloc[2,].astype(str)))))))
+val = 6
+for i in listOfDataInRow2:
+    count = 0
+    for j in range(val,len(listOfDataInRow3)):
+        count= count+1
+        if(count >3):
+            break
+        listOfDataInRow3[j] = (i+ " "+listOfDataInRow3[j]).strip()
+    val+=3
+df.columns =  listOfDataInRow3
+df = df.drop(axis=1,index=range(0,6))
+df.reset_index(drop=True,inplace=True)
+# df.drop(axis=0,index=[0],inplace=True)
+# df.columns
+df.head()
