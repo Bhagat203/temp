@@ -1,1 +1,125 @@
-tt file
+import { Component, OnInit, ViewChild, AfterViewInit, NgZone } from '@angular/core';
+import { Table } from 'primeng/table';
+
+@Component({
+  // your component metadata
+})
+export class YourComponent implements OnInit, AfterViewInit {
+  @ViewChild('dt') table: Table;
+  
+  // Track match modes by field
+  private columnMatchModes = {};
+
+  constructor(private ngZone: NgZone) {}
+
+  ngOnInit() {
+    // Initialize default match modes if needed
+  }
+
+  ngAfterViewInit() {
+    // In PrimeNG 11, we should wait a bit longer for components to initialize
+    setTimeout(() => {
+      this.setupFilterListeners();
+    }, 500);
+  }
+
+  private setupFilterListeners() {
+    if (!this.table) {
+      console.warn('Table reference not available');
+      return;
+    }
+
+    try {
+      // For PrimeNG 11, we need to get the table element
+      const tableElement = this.table.el.nativeElement;
+      
+      // Find all text filter inputs within the table
+      const filterInputs = tableElement.querySelectorAll('.p-column-filter input[type="text"]');
+      
+      filterInputs.forEach(input => {
+        // PrimeNG 11 has specific structure we need to navigate
+        const columnFilterEl = input.closest('.p-column-filter');
+        if (!columnFilterEl) return;
+        
+        // In PrimeNG 11, the field is often on the column header element
+        const headerCell = columnFilterEl.closest('th');
+        if (!headerCell) return;
+        
+        // Try to find the field name from the sortableColumn attribute
+ 
+let fieldName = headerCell.getAttribute('psortablefield') || 
+                        headerCell.getAttribute('psortablecolumn');
+        
+        // If not found, try getting from the filter element
+        if (!fieldName) {
+          fieldName = columnFilterEl.getAttribute('field');
+        }
+        
+        // Last resort: try to find it from table columns
+        if (!fieldName && this.table.columns) {
+          const cellIndex = Array.from(headerCell.parentElement.children).indexOf(headerCell);
+          if (this.table.columns.length > cellIndex) {
+            fieldName = this.table.columns[cellIndex].field;
+          }
+        }
+        
+        if (!fieldName) {
+          console.warn('Could not determine field name for column filter');
+          return;
+        }
+        
+        // Track this input field for cleanup
+        if (!input._hasPrimeNgListener) {
+          // Add input event listener
+          this.ngZone.runOutsideAngular(() => {
+            input.addEventListener('input', (event) => {
+              const value = event.target.value;
+              
+              // Try to get the current match mode
+              let matchMode = 'contains'; // Default
+              
+              // In PrimeNG 11, check for visible match mode display
+              const matchModeDisplay = columnFilterEl.querySelector('.p-column-filter-matchmode-dropdown .p-dropdown-label');
+              if (matchModeDisplay) {
+                const displayText = matchModeDisplay.textContent.toLowerCase();
+                if (displayText.includes('starts')) {
+                  matchMode = 'startsWith';
+                } else if (displayText.includes('ends')) {
+                  matchMode = 'endsWith';
+                } else if (displayText.includes('equal')) {
+                  matchMode = 'equals';
+                }
+              }
+              
+              // Use debounce for better performance
+              if (input._filterTimeout) {
+                clearTimeout(input._filterTimeout);
+              }
+              
+              input._filterTimeout = setTimeout(() => {
+                // Run filter inside NgZone to trigger change detection
+                this.ngZone.run(() => {
+                  this.table.filter(value, fieldName, matchMode);
+                });
+              }, 300);
+            });
+            
+            // Mark this input as having our listener
+            input._hasPrimeNgListener = true;
+          });
+        }
+      });
+      
+      console.log('Live filtering setup complete for all columns');
+    } catch (error) {
+      console.error('Error setting up filter listeners:', error);
+    }
+  }
+  
+  // Public method to call if table is refreshed/rebuilt
+  public refreshFilterListeners() {
+    setTimeout(() => {
+      this.setupFilterListeners();
+    }, 300);
+  }
+}
