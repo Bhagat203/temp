@@ -1,43 +1,14 @@
-import { Component, ViewChild } from '@angular/core';
-import { Table } from 'primeng/table';
+.p-column-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
 
-@Component({
-  selector: 'app-your-component',
-  templateUrl: './your-component.component.html'
-})
-export class YourComponent {
-  @ViewChild('dt') table: Table;
-  
-  yourData = []; // Your table data
-  
-  // Match mode options
-  matchModeOptions = [
-    { label: 'Contains', value: 'contains' },
-    { label: 'Starts With', value: 'startsWith' },
-    { label: 'Ends With', value: 'endsWith' }
-  ];
-  
-  // Track match modes for each column
-  nameMatchMode = 'contains';
-  emailMatchMode = 'contains';
-  
-  // Filter input handler - fires as user types
-  onFilterInput(event: any, field: string, matchMode: string) {
-    const value = event.target.value;
-    
-    // Apply filter immediately while typing
-    this.table.filter(value, field, matchMode);
-  }
-  
-  // Match mode change handler
-  onMatchModeChange(currentValue: string, field: string, newMatchMode: string) {
-    // Update the match mode and re-apply current filter
-    this.table.filter(currentValue, field, newMatchMode);
-  }
-  
-  // Clear filter handler
-  clearFilter(inputElement: HTMLInputElement, field: string) {
-    inputElement.value = '';
-    this.table.filter('', field, 'contains');
-  }
+.p-column-filter-element {
+  flex: 1;
+}
+
+.p-column-filter-matchmode-dropdown {
+  min-width: 100px;
 }
