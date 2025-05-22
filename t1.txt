@@ -1,83 +1,43 @@
-<p-table #dt [value]="yourData" dataKey="id">
-  <ng-template pTemplate="header">
-    <tr>
-      <th pSortableColumn="name">
-        Name
-        <p-sortIcon field="name"></p-sortIcon>
-        <div class="p-column-filter">
-          <!-- Simple custom filter input -->
-          <input 
-            type="text" 
-            pInputText 
-            class="p-column-filter-element"
-            placeholder="Search name..."
-            (input)="onFilterInput($event, 'name', nameMatchMode)"
-            #nameFilter>
-          
-          <!-- Match mode dropdown -->
-          <p-dropdown 
-            [options]="matchModeOptions" 
-            [(ngModel)]="nameMatchMode"
-            optionLabel="label" 
-            optionValue="value"
-            (onChange)="onMatchModeChange(nameFilter.value, 'name', $event.value)"
-            class="p-column-filter-matchmode-dropdown">
-          </p-dropdown>
-          
-          <!-- Clear button -->
-          <button 
-            type="button" 
-            pButton 
-            icon="pi pi-times" 
-            class="p-button-text p-button-sm"
-            (click)="clearFilter(nameFilter, 'name')">
-          </button>
-        </div>
-      </th>
-      
-      <!-- Add more columns as needed -->
-      <th pSortableColumn="email">
-        Email
-        <p-sortIcon field="email"></p-sortIcon>
-        <div class="p-column-filter">
-          <input 
-            type="text" 
-            pInputText 
-            class="p-column-filter-element"
-            placeholder="Search email..."
-            (input)="onFilterInput($event, 'email', emailMatchMode)"
-            #emailFilter>
-          
-          <p-dropdown 
-            [options]="matchModeOptions" 
-            [(ngModel)]="emailMatchMode"
-            optionLabel="label" 
-            optionValue="value"
-            (onChange)="onMatchModeChange(emailFilter.value, 'email', $event.value)"
-            class="p-column-filter-matchmode-dropdown">
-          </p-dropdown>
-          
-          <button 
-            type="button" 
-            pButton 
-            icon="pi pi-times" 
-            class="p-button-text p-button-sm"
-            (click)="clearFilter(emailFilter, 'email')">
-          </button>
-        </div>
-      </th>
-    </tr>
-  </ng-template>
+import { Component, ViewChild } from '@angular/core';
+import { Table } from 'primeng/table';
+
+@Component({
+  selector: 'app-your-component',
+  templateUrl: './your-component.component.html'
+})
+export class YourComponent {
+  @ViewChild('dt') table: Table;
   
-  <ng-template pTemplate="body" let-rowData>
-    <tr>
-      <td>{{rowData.name}}</td>
-      <td>{{rowData.email}}</td>
-    </tr>
-  </ng-template>
-</p-table>
-
-
-
-
-
+  yourData = []; // Your table data
+  
+  // Match mode options
+  matchModeOptions = [
+    { label: 'Contains', value: 'contains' },
+    { label: 'Starts With', value: 'startsWith' },
+    { label: 'Ends With', value: 'endsWith' }
+  ];
+  
+  // Track match modes for each column
+  nameMatchMode = 'contains';
+  emailMatchMode = 'contains';
+  
+  // Filter input handler - fires as user types
+  onFilterInput(event: any, field: string, matchMode: string) {
+    const value = event.target.value;
+    
+    // Apply filter immediately while typing
+    this.table.filter(value, field, matchMode);
+  }
+  
+  // Match mode change handler
+  onMatchModeChange(currentValue: string, field: string, newMatchMode: string) {
+    // Update the match mode and re-apply current filter
+    this.table.filter(currentValue, field, newMatchMode);
+  }
+  
+  // Clear filter handler
+  clearFilter(inputElement: HTMLInputElement, field: string) {
+    inputElement.value = '';
+    this.table.filter('', field, 'contains');
+  }
+}
