@@ -1,14 +1,190 @@
+/* Main column filter container */
 .p-column-filter {
+  position: relative;
+  margin-top: 8px;
+}
+
+/* Input field styling */
+.p-column-filter .p-inputtext {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #ffffff;
+  transition: all 0.15s ease-in-out;
+}
+
+.p-column-filter .p-inputtext:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Filter icon inside input */
+.p-column-filter::before {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 2v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Match mode dropdown button */
+.p-column-filter .p-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  min-width: 140px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  display: none;
+}
+
+/* Show dropdown on hover/focus */
+.p-column-filter:hover .p-dropdown,
+.p-column-filter .p-dropdown.p-focus {
+  display: block;
+}
+
+/* Dropdown trigger styling */
+.p-column-filter .p-dropdown-trigger {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  justify-content: center;
+  cursor: pointer;
 }
 
-.p-column-filter-element {
-  flex: 1;
+/* Dropdown panel */
+.p-dropdown-panel {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  min-width: 160px;
 }
 
-.p-column-filter-matchmode-dropdown {
-  min-width: 100px;
+/* Dropdown items */
+.p-dropdown-items {
+  padding: 4px 0;
+}
+
+.p-dropdown-item {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.p-dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.p-dropdown-item.p-highlight {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Clear button */
+.p-column-filter .p-button.p-button-text {
+  position: absolute;
+  right: 30px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  display: none;
+}
+
+/* Show clear button when input has value */
+.p-column-filter .p-inputtext:not(:placeholder-shown) + .p-dropdown + .p-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.p-column-filter .p-button:hover {
+  color: #374151;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .p-column-filter .p-inputtext {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  .p-dropdown-panel {
+    min-width: 120px;
+  }
+}
+
+/* Custom filter dropdown appearance when closed */
+.p-column-filter .p-dropdown .p-dropdown-label {
+  display: none;
+}
+
+/* Only show filter icon in input by default */
+.p-column-filter .p-dropdown-trigger::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid #6b7280;
+  margin-left: 4px;
+}
+
+/* Active state for dropdown */
+.p-column-filter .p-dropdown.p-dropdown-open .p-dropdown-trigger::after {
+  border-top: none;
+  border-bottom: 6px solid #6b7280;
+}
+
+/* Table header adjustments */
+th .p-column-filter {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+/* Focus states */
+.p-column-filter .p-inputtext:focus + .p-dropdown {
+  display: block;
+}
+
+/* Animation for dropdown */
+.p-dropdown-panel {
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
